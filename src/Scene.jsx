@@ -7,6 +7,7 @@ import { Floor } from "./Floor";
 import { useMemo, useRef } from "react";
 import { toArray } from "./utils";
 import { useThree } from "@react-three/fiber";
+import sceneConfig from "./sceneConfig.json";
 
 const Scene = () => {
   const controls = useControls("Environment", {
@@ -24,27 +25,14 @@ const Scene = () => {
 
   const arches = useMemo(
     () =>
-      [
-        { position: [3, 0, -6], rotation: [0, Math.PI / 4, 0], scale: 1 },
-        { position: [0, 0, 5], rotation: [0, Math.PI / 2, 0], scale: 1 },
-        {
-          position: [-7.2, 0.6, 2.3],
-          rotation: [0, 0, -Math.PI / 6],
-          scale: 1,
-        },
-      ].map((props, i) => (
+      sceneConfig.arches.map((props, i) => (
         <Arch key={i} envMapIntensity={envMapIntensity} castShadow {...props} />
       )),
     [envMapIntensity]
   );
   const columns = useMemo(
     () =>
-      [
-        { position: [-7.7, 0, -7], rotation: [0, 0, 0], scale: 1 },
-        { position: [-6.4, 0, -8.3], rotation: [0, 0, 0], scale: [1, 1.3, 1] },
-        { position: [-4, 0, -6.5], rotation: [0, 0, 0], scale: [1, 0.5, 1] },
-        { position: [0, 0, 5], rotation: [0, 0, 0], scale: [1, 1, 1] },
-      ].map((props, i) => (
+      sceneConfig.columns.map((props, i) => (
         <Column
           key={i}
           envMapIntensity={envMapIntensity}
@@ -56,18 +44,18 @@ const Scene = () => {
   );
   const chains = useMemo(
     () =>
-      [
-        { position: [2, 0, -5], rotation: [0, 0, 0], scale: 1 },
-        { position: [4, 0, 0.6], rotation: [0, 0, 0], scale: 1 },
-      ].map((props, i) => (
-        <Chain
-          key={i}
-          radius={0.4}
-          envMapIntensity={envMapIntensity}
-          castShadow
-          {...props}
-        />
-      )),
+      sceneConfig.chains.map((props, i) => {
+        const { radius, ...restProps } = props;
+        return (
+          <Chain
+            key={i}
+            radius={radius}
+            envMapIntensity={envMapIntensity}
+            castShadow
+            {...restProps}
+          />
+        );
+      }),
     [envMapIntensity]
   );
 
