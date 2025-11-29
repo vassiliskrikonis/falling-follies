@@ -1,0 +1,112 @@
+import { createContext, useState, useCallback } from "react";
+import sceneConfigData from "./sceneConfig.json";
+
+export const SceneConfigContext = createContext(null);
+
+export const SceneConfigProvider = ({ children }) => {
+  const [sceneConfig, setSceneConfig] = useState({
+    ...sceneConfigData,
+    balls: sceneConfigData.balls || [],
+  });
+
+  const addArc = useCallback(() => {
+    setSceneConfig((prev) => ({
+      ...prev,
+      arches: [
+        ...prev.arches,
+        {
+          position: [0, 0, 0],
+          rotation: [0, 0, 0],
+          scale: 1,
+        },
+      ],
+    }));
+  }, []);
+
+  const addColumn = useCallback(() => {
+    setSceneConfig((prev) => ({
+      ...prev,
+      columns: [
+        ...prev.columns,
+        {
+          position: [0, 0, 0],
+          rotation: [0, 0, 0],
+          scale: 1,
+        },
+      ],
+    }));
+  }, []);
+
+  const addChain = useCallback(() => {
+    setSceneConfig((prev) => ({
+      ...prev,
+      chains: [
+        ...prev.chains,
+        {
+          position: [0, 0, 0],
+          rotation: [0, 0, 0],
+          scale: 1,
+          radius: 0.4,
+        },
+      ],
+    }));
+  }, []);
+
+  const addBall = useCallback(() => {
+    setSceneConfig((prev) => ({
+      ...prev,
+      balls: [
+        ...(prev.balls || []),
+        {
+          position: [0, 0, 0],
+          rotation: [0, 0, 0],
+          scale: 1,
+          radius: 0.2,
+        },
+      ],
+    }));
+  }, []);
+
+  const copySceneConfig = useCallback(async () => {
+    try {
+      const configToCopy = {
+        arches: sceneConfig.arches,
+        columns: sceneConfig.columns,
+        chains: sceneConfig.chains,
+        ...(sceneConfig.balls && sceneConfig.balls.length > 0
+          ? { balls: sceneConfig.balls }
+          : {}),
+      };
+      const jsonString = JSON.stringify(configToCopy, null, 2);
+      await navigator.clipboard.writeText(jsonString);
+      
+      // Show feedback (you could enhance this with a toast notification)
+      const button = document.querySelector(".editor-copy-button");
+      if (button) {
+        const originalText = button.textContent;
+        button.textContent = "✓";
+        setTimeout(() => {
+          button.textContent = originalText;
+        }, 1000);
+      }
+    } catch (err) {
+      console.error("Failed to copy scene config:", err);
+    }
+  }, [sceneConfig]);
+
+  return (
+    <SceneConfigContext.Provider
+      value={{
+        sceneConfig,
+        addArc,
+        addColumn,
+        addChain,
+        addBall,
+        copySceneConfig,
+      }}
+    >
+      {children}
+    </SceneConfigContext.Provider>
+  );
+};
+

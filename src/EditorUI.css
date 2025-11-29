@@ -1,0 +1,58 @@
+.editor-ui {
+  position: fixed;
+  top: 0;
+  right: 0;
+  width: auto;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  justify-content: flex-start;
+  padding: 1em;
+  font-family: Arial, Helvetica, sans-serif;
+  color: white;
+  pointer-events: none;
+  z-index: 1000;
+}
+
+.editor-toolbar {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5em;
+  pointer-events: auto;
+  background: rgba(0, 0, 0, 0.5);
+  padding: 0.75em;
+  border-radius: 8px;
+  margin-bottom: 1em;
+}
+
+.editor-toolbar:last-child {
+  margin-bottom: 0;
+}
+
+.editor-button {
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  color: white;
+  font-size: 2em;
+  width: 60px;
+  height: 60px;
+  border-radius: 8px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  padding: 0;
+}
+
+.editor-button:hover {
+  background: rgba(255, 255, 255, 0.2);
+  border-color: rgba(255, 255, 255, 0.5);
+  transform: scale(1.05);
+}
+
+.editor-button:active {
+  transform: scale(0.95);
+}
+
