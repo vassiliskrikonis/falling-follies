@@ -7,6 +7,7 @@ export const SceneConfigProvider = ({ children }) => {
   const [sceneConfig, setSceneConfig] = useState({
     ...sceneConfigData,
     balls: sceneConfigData.balls || [],
+    camera: sceneConfigData.camera,
   });
 
   const addArc = useCallback(() => {
@@ -142,6 +143,7 @@ export const SceneConfigProvider = ({ children }) => {
   const copySceneConfig = useCallback(async () => {
     try {
       const configToCopy = {
+        camera: sceneConfig.camera,
         arches: sceneConfig.arches,
         columns: sceneConfig.columns,
         chains: sceneConfig.chains,

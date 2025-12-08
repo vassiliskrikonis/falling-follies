@@ -3,6 +3,7 @@ import {
   Environment,
   OrbitControls,
   OrthographicCamera,
+  PerspectiveCamera,
 } from "@react-three/drei";
 import { Arch } from "./Arch";
 import { Column } from "./Column";
@@ -160,29 +161,29 @@ const Scene = () => {
     return { left: -10 * aspect, right: 10 * aspect, top: 10, bottom: -10 };
   }, [size.width, size.height]);
 
-  // Store initial perspective camera transform - centered in scene at eye level
-  const initialPerspectivePosition = useRef([0, 2.5, 0]);
-  const initialPerspectiveRotation = useRef([0, 0, 0]);
   const initialIsometricPosition = useRef(isometricPosition);
+  const perspectiveCameraRef = useRef();
 
   return (
     <>
-      <OrbitControls
-        ref={orbitControls}
-        makeDefault
-        maxDistance={cameraControls.maxDistance}
-        target={[
-          cameraControls.target.x,
-          cameraControls.target.y,
-          cameraControls.target.z,
-        ]}
-      />
+      {editorVisible && (
+        <OrbitControls
+          ref={orbitControls}
+          makeDefault
+          maxDistance={cameraControls.maxDistance}
+          target={[
+            cameraControls.target.x,
+            cameraControls.target.y,
+            cameraControls.target.z,
+          ]}
+        />
+      )}
       {/* Perspective Camera for normal mode */}
-      <perspectiveCamera
+      <PerspectiveCamera
+        ref={perspectiveCameraRef}
+        position={sceneConfig.camera.position}
+        rotation={sceneConfig.camera.rotation}
         makeDefault={!editorVisible}
-        position={initialPerspectivePosition.current}
-        rotation={initialPerspectiveRotation.current}
-        up={[0, 1, 0]}
         fov={75}
         near={0.1}
         far={1000}
