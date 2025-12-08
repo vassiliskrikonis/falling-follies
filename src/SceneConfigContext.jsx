@@ -67,6 +67,78 @@ export const SceneConfigProvider = ({ children }) => {
     }));
   }, []);
 
+  const updateArc = useCallback((index, transform) => {
+    setSceneConfig((prev) => {
+      const newArches = [...prev.arches];
+      if (newArches[index]) {
+        newArches[index] = {
+          ...newArches[index],
+          position: transform.position,
+          rotation: transform.rotation,
+          scale: transform.scale,
+        };
+      }
+      return {
+        ...prev,
+        arches: newArches,
+      };
+    });
+  }, []);
+
+  const updateColumn = useCallback((index, transform) => {
+    setSceneConfig((prev) => {
+      const newColumns = [...prev.columns];
+      if (newColumns[index]) {
+        newColumns[index] = {
+          ...newColumns[index],
+          position: transform.position,
+          rotation: transform.rotation,
+          scale: transform.scale,
+        };
+      }
+      return {
+        ...prev,
+        columns: newColumns,
+      };
+    });
+  }, []);
+
+  const updateChain = useCallback((index, transform) => {
+    setSceneConfig((prev) => {
+      const newChains = [...prev.chains];
+      if (newChains[index]) {
+        newChains[index] = {
+          ...newChains[index],
+          position: transform.position,
+          rotation: transform.rotation,
+          scale: transform.scale,
+        };
+      }
+      return {
+        ...prev,
+        chains: newChains,
+      };
+    });
+  }, []);
+
+  const updateBall = useCallback((index, transform) => {
+    setSceneConfig((prev) => {
+      const newBalls = [...(prev.balls || [])];
+      if (newBalls[index]) {
+        newBalls[index] = {
+          ...newBalls[index],
+          position: transform.position,
+          rotation: transform.rotation,
+          scale: transform.scale,
+        };
+      }
+      return {
+        ...prev,
+        balls: newBalls,
+      };
+    });
+  }, []);
+
   const copySceneConfig = useCallback(async () => {
     try {
       const configToCopy = {
@@ -102,6 +174,10 @@ export const SceneConfigProvider = ({ children }) => {
         addColumn,
         addChain,
         addBall,
+        updateArc,
+        updateColumn,
+        updateChain,
+        updateBall,
         copySceneConfig,
       }}
     >

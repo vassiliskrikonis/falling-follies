@@ -9,14 +9,15 @@ import { Column } from "./Column";
 import { folder, useControls } from "leva";
 import { Chain } from "./Chain";
 import { Floor } from "./Floor";
-import { toArray } from "./utils";
+import { toArray, removeTransformProps } from "./utils";
 import { useThree } from "@react-three/fiber";
 import { useSceneConfig } from "./useSceneConfig";
 import { useEditor } from "./useEditor";
 import { Ball } from "./Ball";
+import { EditableItem } from "./EditableItem";
 
 const Scene = () => {
-  const { sceneConfig } = useSceneConfig();
+  const { sceneConfig, updateArc, updateColumn, updateChain, updateBall } = useSceneConfig();
   const { editorVisible } = useEditor();
   const controls = useControls("Environment", {
     ambientLight: 1.5,
@@ -33,55 +34,98 @@ const Scene = () => {
 
   const arches = useMemo(
     () =>
-      (sceneConfig.arches || []).map((props, i) => (
-        <Arch key={i} envMapIntensity={envMapIntensity} castShadow {...props} />
-      )),
-    [envMapIntensity, sceneConfig.arches]
+      (sceneConfig.arches || []).map((props, i) => {
+        // When in editor, remove transform props since PivotControls handles them
+        const archProps = editorVisible ? removeTransformProps(props) : props;
+        return (
+          <EditableItem
+            key={i}
+            editorVisible={editorVisible}
+            initialProps={props}
+            onTransformEnd={updateArc}
+            index={i}
+          >
+            <Arch 
+              envMapIntensity={envMapIntensity} 
+              castShadow 
+              {...archProps}
+            />
+          </EditableItem>
+        );
+      }),
+    [envMapIntensity, sceneConfig.arches, editorVisible, updateArc]
   );
   const columns = useMemo(
     () =>
-      (sceneConfig.columns || []).map((props, i) => (
-        <Column
-          key={i}
-          envMapIntensity={envMapIntensity}
-          castShadow
-          {...props}
-        />
-      )),
-    [envMapIntensity, sceneConfig.columns]
+      (sceneConfig.columns || []).map((props, i) => {
+        // When in editor, remove transform props since PivotControls handles them
+        const columnProps = editorVisible ? removeTransformProps(props) : props;
+        return (
+          <EditableItem
+            key={i}
+            editorVisible={editorVisible}
+            initialProps={props}
+            onTransformEnd={updateColumn}
+            index={i}
+          >
+            <Column 
+              envMapIntensity={envMapIntensity} 
+              castShadow 
+              {...columnProps}
+            />
+          </EditableItem>
+        );
+      }),
+    [envMapIntensity, sceneConfig.columns, editorVisible, updateColumn]
   );
   const chains = useMemo(
     () =>
       (sceneConfig.chains || []).map((props, i) => {
-        const { radius, ...restProps } = props;
+        // When in editor, remove transform props since PivotControls handles them
+        const chainProps = editorVisible ? removeTransformProps(props) : props;
         return (
-          <Chain
+          <EditableItem
             key={i}
-            radius={radius}
-            envMapIntensity={envMapIntensity}
-            castShadow
-            {...restProps}
-          />
+            editorVisible={editorVisible}
+            initialProps={props}
+            onTransformEnd={updateChain}
+            index={i}
+          >
+            <Chain
+              radius={props.radius}
+              envMapIntensity={envMapIntensity}
+              castShadow
+              {...chainProps}
+            />
+          </EditableItem>
         );
       }),
-    [envMapIntensity, sceneConfig.chains]
+    [envMapIntensity, sceneConfig.chains, editorVisible, updateChain]
   );
 
   const balls = useMemo(
     () =>
       (sceneConfig.balls || []).map((props, i) => {
-        const { radius, ...restProps } = props;
+        // When in editor, remove transform props since PivotControls handles them
+        const ballProps = editorVisible ? removeTransformProps(props) : props;
         return (
-          <Ball
+          <EditableItem
             key={i}
-            radius={radius}
-            envMapIntensity={envMapIntensity}
-            castShadow
-            {...restProps}
-          />
+            editorVisible={editorVisible}
+            initialProps={props}
+            onTransformEnd={updateBall}
+            index={i}
+          >
+            <Ball
+              radius={props.radius}
+              envMapIntensity={envMapIntensity}
+              castShadow
+              {...ballProps}
+            />
+          </EditableItem>
         );
       }),
-    [envMapIntensity, sceneConfig.balls]
+    [envMapIntensity, sceneConfig.balls, editorVisible, updateBall]
   );
 
   const cameraControls = useControls("Camera", {
