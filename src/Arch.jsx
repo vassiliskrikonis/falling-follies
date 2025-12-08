@@ -1,8 +1,9 @@
 import { Cylinder } from "@react-three/drei";
 import { folder, useControls } from "leva";
-import { createRef, useEffect, useMemo, useRef } from "react";
+import { createRef, useEffect, useMemo, useRef, useCallback } from "react";
 import { Arc } from "./Arc";
 import { CylinderCollider, RigidBody } from "@react-three/rapier";
+import { useClickHandler } from "./ClickHandlerContext";
 import * as THREE from "three";
 
 const toArray = ({ x, y, z }) => [x, y, z];
@@ -63,6 +64,21 @@ export function Arch({ castShadow = false, envMapIntensity, ...props }) {
   const columnRefs = useRef(
     Array.from({ length: generalControls.columns }).map(() => createRef())
   );
+  const { registerClickHandler } = useClickHandler();
+
+  // Create click handler for arch roof
+  const handleArchClick = useCallback(() => {
+    if (roofRef.current) {
+      const mass = roofRef.current.mass();
+      roofRef.current.applyImpulse({ x: 0, y: 3 * mass, z: 0 }, true);
+    }
+  }, []);
+
+  // Register click handler
+  useEffect(() => {
+    const unregister = registerClickHandler(handleArchClick);
+    return unregister;
+  }, [registerClickHandler, handleArchClick]);
 
   // sleep columns
   useEffect(() => {
@@ -82,10 +98,7 @@ export function Arch({ castShadow = false, envMapIntensity, ...props }) {
       >
         <Arc
           castShadow={castShadow}
-          onClick={() => {
-            const mass = roofRef.current.mass();
-            roofRef.current.applyImpulse({ x: 0, y: 3 * mass, z: 0 }, true);
-          }}
+          onClick={handleArchClick}
         />
       </RigidBody>
       {positions.map((p, i) => (

@@ -9,6 +9,7 @@ import { LoadingScreen } from "./LoadingScreen.jsx";
 import { EditorUI } from "./EditorUI.jsx";
 import { SceneConfigProvider } from "./SceneConfigContext.jsx";
 import { EditorProvider } from "./EditorContext.jsx";
+import { ClickHandlerProvider } from "./ClickHandlerContext.jsx";
 import { useEditor } from "./useEditor.js";
 
 const App = () => {
@@ -51,7 +52,9 @@ ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
     <SceneConfigProvider>
       <EditorProvider>
-        <App />
+        <ClickHandlerProvider>
+          <App />
+        </ClickHandlerProvider>
       </EditorProvider>
     </SceneConfigProvider>
   </React.StrictMode>

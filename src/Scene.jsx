@@ -18,11 +18,13 @@ import { useEditor } from "./useEditor";
 import { Ball } from "./Ball";
 import { EditableItem } from "./EditableItem";
 import { CameraIndicator } from "./CameraIndicator";
+import { useClickHandler } from "./ClickHandlerContext";
 import * as THREE from "three";
 
 const Scene = () => {
   const { sceneConfig, updateArc, updateColumn, updateChain, updateBall, updateCamera, deleteArc, deleteColumn, deleteChain, deleteBall } = useSceneConfig();
   const { editorVisible } = useEditor();
+  const { triggerAllClicks } = useClickHandler();
   const controls = useControls("Environment", {
     ambientLight: 1.5,
     envMapIntensity: { value: 0.7, min: 0, max: 12 },
@@ -179,6 +181,23 @@ const Scene = () => {
       perspectiveCameraRef.current.rotation.set(...sceneConfig.camera.rotation);
     }
   }, [sceneConfig.camera, editorVisible]);
+
+  // Handle "T" keypress to trigger all click actions in VIEW mode
+  useEffect(() => {
+    const handleKeyPress = (event) => {
+      // Only trigger in VIEW mode (when editor is not visible)
+      if (event.key === "t" || event.key === "T") {
+        if (!editorVisible) {
+          triggerAllClicks();
+        }
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyPress);
+    return () => {
+      window.removeEventListener("keydown", handleKeyPress);
+    };
+  }, [editorVisible, triggerAllClicks]);
 
   // Handle camera transform end (similar to EditableItem)
   const handleCameraTransformEnd = (l, deltaL, w) => {
