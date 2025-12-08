@@ -1,24 +1,27 @@
-import { useMemo, useRef } from "react";
+import { useMemo, useRef, useEffect } from "react";
 import {
   Environment,
   OrbitControls,
   OrthographicCamera,
   PerspectiveCamera,
+  PivotControls,
 } from "@react-three/drei";
 import { Arch } from "./Arch";
 import { Column } from "./Column";
 import { folder, useControls } from "leva";
 import { Chain } from "./Chain";
 import { Floor } from "./Floor";
-import { toArray, removeTransformProps } from "./utils";
+import { toArray, removeTransformProps, createMatrixFromTransform, decomposeMatrix } from "./utils";
 import { useThree } from "@react-three/fiber";
 import { useSceneConfig } from "./useSceneConfig";
 import { useEditor } from "./useEditor";
 import { Ball } from "./Ball";
 import { EditableItem } from "./EditableItem";
+import { CameraIndicator } from "./CameraIndicator";
+import * as THREE from "three";
 
 const Scene = () => {
-  const { sceneConfig, updateArc, updateColumn, updateChain, updateBall } = useSceneConfig();
+  const { sceneConfig, updateArc, updateColumn, updateChain, updateBall, updateCamera } = useSceneConfig();
   const { editorVisible } = useEditor();
   const controls = useControls("Environment", {
     ambientLight: 1.5,
@@ -163,6 +166,52 @@ const Scene = () => {
 
   const initialIsometricPosition = useRef(isometricPosition);
   const perspectiveCameraRef = useRef();
+  const cameraGroupRef = useRef();
+
+  // Sync PerspectiveCamera with config when in view mode
+  useEffect(() => {
+    if (!editorVisible && perspectiveCameraRef.current && sceneConfig.camera) {
+      perspectiveCameraRef.current.position.set(...sceneConfig.camera.position);
+      perspectiveCameraRef.current.rotation.set(...sceneConfig.camera.rotation);
+    }
+  }, [sceneConfig.camera, editorVisible]);
+
+  // Handle camera transform end (similar to EditableItem)
+  const handleCameraTransformEnd = (l, deltaL, w) => {
+    requestAnimationFrame(() => {
+      let matrix = null;
+      
+      if (cameraGroupRef.current) {
+        cameraGroupRef.current.updateMatrixWorld(true);
+        matrix = cameraGroupRef.current.matrixWorld.clone();
+      }
+      
+      if (!matrix) {
+        matrix = w || l;
+      }
+
+      if (matrix && matrix instanceof THREE.Matrix4) {
+        try {
+          const transform = decomposeMatrix(matrix);
+          updateCamera(transform);
+        } catch (error) {
+          console.error("Error updating camera transform:", error, { l, w, matrix });
+        }
+      } else {
+        console.warn("Invalid matrix in camera onDragEnd:", { l, w, matrix });
+      }
+    });
+  };
+
+  // Camera initial matrix for PivotControls
+  const cameraInitialMatrix = useMemo(() => {
+    if (!sceneConfig.camera) return null;
+    return createMatrixFromTransform(
+      sceneConfig.camera.position || [0, 0, 0],
+      sceneConfig.camera.rotation || [0, 0, 0],
+      1
+    );
+  }, [sceneConfig.camera]);
 
   return (
     <>
@@ -181,13 +230,30 @@ const Scene = () => {
       {/* Perspective Camera for normal mode */}
       <PerspectiveCamera
         ref={perspectiveCameraRef}
-        position={sceneConfig.camera.position}
-        rotation={sceneConfig.camera.rotation}
+        {...(!editorVisible && sceneConfig.camera ? {
+          position: sceneConfig.camera.position,
+          rotation: sceneConfig.camera.rotation,
+        } : {})}
         makeDefault={!editorVisible}
         fov={75}
         near={0.1}
         far={1000}
       />
+      {/* Camera indicator with PivotControls in editor mode */}
+      {editorVisible && sceneConfig.camera && cameraInitialMatrix && (
+        <PivotControls
+          autoTransform
+          matrix={cameraInitialMatrix}
+          scale={1}
+          lineWidth={2.5}
+          annotations={true}
+          onDragEnd={handleCameraTransformEnd}
+        >
+          <group ref={cameraGroupRef}>
+            <CameraIndicator />
+          </group>
+        </PivotControls>
+      )}
       {/* Orthographic Camera for editor mode */}
       <OrthographicCamera
         ref={(ref) => {

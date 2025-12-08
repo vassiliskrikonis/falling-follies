@@ -140,6 +140,16 @@ export const SceneConfigProvider = ({ children }) => {
     });
   }, []);
 
+  const updateCamera = useCallback((transform) => {
+    setSceneConfig((prev) => ({
+      ...prev,
+      camera: {
+        position: transform.position,
+        rotation: transform.rotation,
+      },
+    }));
+  }, []);
+
   const copySceneConfig = useCallback(async () => {
     try {
       const configToCopy = {
@@ -180,6 +190,7 @@ export const SceneConfigProvider = ({ children }) => {
         updateColumn,
         updateChain,
         updateBall,
+        updateCamera,
         copySceneConfig,
       }}
     >
