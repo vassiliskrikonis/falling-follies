@@ -21,7 +21,7 @@ import { CameraIndicator } from "./CameraIndicator";
 import * as THREE from "three";
 
 const Scene = () => {
-  const { sceneConfig, updateArc, updateColumn, updateChain, updateBall, updateCamera } = useSceneConfig();
+  const { sceneConfig, updateArc, updateColumn, updateChain, updateBall, updateCamera, deleteArc, deleteColumn, deleteChain, deleteBall } = useSceneConfig();
   const { editorVisible } = useEditor();
   const controls = useControls("Environment", {
     ambientLight: 1.5,
@@ -47,6 +47,7 @@ const Scene = () => {
             editorVisible={editorVisible}
             initialProps={props}
             onTransformEnd={updateArc}
+            onDelete={() => deleteArc(i)}
             index={i}
           >
             <Arch 
@@ -57,7 +58,7 @@ const Scene = () => {
           </EditableItem>
         );
       }),
-    [envMapIntensity, sceneConfig.arches, editorVisible, updateArc]
+    [envMapIntensity, sceneConfig.arches, editorVisible, updateArc, deleteArc]
   );
   const columns = useMemo(
     () =>
@@ -70,6 +71,7 @@ const Scene = () => {
             editorVisible={editorVisible}
             initialProps={props}
             onTransformEnd={updateColumn}
+            onDelete={() => deleteColumn(i)}
             index={i}
           >
             <Column 
@@ -80,7 +82,7 @@ const Scene = () => {
           </EditableItem>
         );
       }),
-    [envMapIntensity, sceneConfig.columns, editorVisible, updateColumn]
+    [envMapIntensity, sceneConfig.columns, editorVisible, updateColumn, deleteColumn]
   );
   const chains = useMemo(
     () =>
@@ -93,6 +95,7 @@ const Scene = () => {
             editorVisible={editorVisible}
             initialProps={props}
             onTransformEnd={updateChain}
+            onDelete={() => deleteChain(i)}
             index={i}
           >
             <Chain
@@ -104,7 +107,7 @@ const Scene = () => {
           </EditableItem>
         );
       }),
-    [envMapIntensity, sceneConfig.chains, editorVisible, updateChain]
+    [envMapIntensity, sceneConfig.chains, editorVisible, updateChain, deleteChain]
   );
 
   const balls = useMemo(
@@ -118,6 +121,7 @@ const Scene = () => {
             editorVisible={editorVisible}
             initialProps={props}
             onTransformEnd={updateBall}
+            onDelete={() => deleteBall(i)}
             index={i}
           >
             <Ball
@@ -129,7 +133,7 @@ const Scene = () => {
           </EditableItem>
         );
       }),
-    [envMapIntensity, sceneConfig.balls, editorVisible, updateBall]
+    [envMapIntensity, sceneConfig.balls, editorVisible, updateBall, deleteBall]
   );
 
   const cameraControls = useControls("Camera", {

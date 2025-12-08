@@ -140,6 +140,50 @@ export const SceneConfigProvider = ({ children }) => {
     });
   }, []);
 
+  const deleteArc = useCallback((index) => {
+    setSceneConfig((prev) => {
+      const newArches = [...prev.arches];
+      newArches.splice(index, 1);
+      return {
+        ...prev,
+        arches: newArches,
+      };
+    });
+  }, []);
+
+  const deleteColumn = useCallback((index) => {
+    setSceneConfig((prev) => {
+      const newColumns = [...prev.columns];
+      newColumns.splice(index, 1);
+      return {
+        ...prev,
+        columns: newColumns,
+      };
+    });
+  }, []);
+
+  const deleteChain = useCallback((index) => {
+    setSceneConfig((prev) => {
+      const newChains = [...prev.chains];
+      newChains.splice(index, 1);
+      return {
+        ...prev,
+        chains: newChains,
+      };
+    });
+  }, []);
+
+  const deleteBall = useCallback((index) => {
+    setSceneConfig((prev) => {
+      const newBalls = [...(prev.balls || [])];
+      newBalls.splice(index, 1);
+      return {
+        ...prev,
+        balls: newBalls,
+      };
+    });
+  }, []);
+
   const updateCamera = useCallback((transform) => {
     setSceneConfig((prev) => ({
       ...prev,
@@ -192,6 +236,10 @@ export const SceneConfigProvider = ({ children }) => {
         updateBall,
         updateCamera,
         copySceneConfig,
+        deleteArc,
+        deleteColumn,
+        deleteChain,
+        deleteBall,
       }}
     >
       {children}

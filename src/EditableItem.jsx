@@ -1,6 +1,7 @@
 import { useRef } from "react";
 import { PivotControls } from "@react-three/drei";
 import { createMatrixFromTransform, decomposeMatrix } from "./utils";
+import { DeleteButton } from "./DeleteButton";
 import * as THREE from "three";
 
 /**
@@ -11,6 +12,7 @@ export const EditableItem = ({
   editorVisible,
   initialProps,
   onTransformEnd,
+  onDelete,
   index,
 }) => {
   const groupRef = useRef();
@@ -73,6 +75,7 @@ export const EditableItem = ({
     >
       <group ref={groupRef}>
         {children}
+        {editorVisible && onDelete && <DeleteButton onDelete={onDelete} />}
       </group>
     </PivotControls>
   );
