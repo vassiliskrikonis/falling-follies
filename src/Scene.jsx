@@ -18,6 +18,7 @@ import {
   decomposeMatrix,
 } from "./utils";
 import { useThree } from "@react-three/fiber";
+import { useRapier } from "@react-three/rapier";
 import { useSceneConfig } from "./useSceneConfig";
 import { useEditor } from "./useEditor";
 import { Ball } from "./Ball";
@@ -180,6 +181,8 @@ const Scene = () => {
   const orbitControls = useRef();
   const orthoCameraRef = useRef();
   const { size, raycaster, camera, gl } = useThree();
+  const { world } = useRapier();
+  const gravityInverted = useRef(false);
 
   // Calculate isometric camera position (30° elevation angle from horizontal)
   const isometricDistance = 15;
@@ -229,6 +232,29 @@ const Scene = () => {
       window.removeEventListener("keydown", handleKeyPress);
     };
   }, [editorVisible, triggerAllClicks]);
+
+  // Handle "I" keypress to invert gravity
+  useEffect(() => {
+    const handleKeyPress = (event) => {
+      if (event.key === "i" || event.key === "I") {
+        event.preventDefault();
+        // Toggle gravity inversion
+        gravityInverted.current = !gravityInverted.current;
+        // Default gravity is { x: 0, y: -9.81, z: 0 }
+        // Inverted gravity is { x: 0, y: 9.81, z: 0 }
+        if (world && world.gravity) {
+          world.gravity.x = 0;
+          world.gravity.y = gravityInverted.current ? 9.81 : -9.81;
+          world.gravity.z = 0;
+        }
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyPress);
+    return () => {
+      window.removeEventListener("keydown", handleKeyPress);
+    };
+  }, [world]);
 
   // Handle click for lock mode object placement
   useEffect(() => {
