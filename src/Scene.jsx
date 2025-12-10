@@ -1,4 +1,4 @@
-import { useMemo, useRef, useEffect } from "react";
+import { useMemo, useRef, useEffect, useState } from "react";
 import {
   Environment,
   OrbitControls,
@@ -19,6 +19,7 @@ import {
 } from "./utils";
 import { useThree } from "@react-three/fiber";
 import { useRapier } from "@react-three/rapier";
+import { Attractor } from "@react-three/rapier-addons";
 import { useSceneConfig } from "./useSceneConfig";
 import { useEditor } from "./useEditor";
 import { Ball } from "./Ball";
@@ -183,6 +184,8 @@ const Scene = () => {
   const { size, raycaster, camera, gl } = useThree();
   const { world } = useRapier();
   const gravityInverted = useRef(false);
+  const [attractors, setAttractors] = useState([]);
+  const attractorIdCounter = useRef(0);
 
   // Calculate isometric camera position (30° elevation angle from horizontal)
   const isometricDistance = 15;
@@ -255,6 +258,52 @@ const Scene = () => {
       window.removeEventListener("keydown", handleKeyPress);
     };
   }, [world]);
+
+  // Handle "G" keypress to place attractor in front of camera
+  useEffect(() => {
+    const handleKeyPress = (event) => {
+      // Only work in VIEW mode (when editor is not visible)
+      if ((event.key === "g" || event.key === "G") && !editorVisible) {
+        event.preventDefault();
+        // Get camera's forward direction
+        const forwardDirection = new THREE.Vector3();
+        camera.getWorldDirection(forwardDirection);
+        // Place attractor 7 units in front of camera
+        const distance = 7;
+        const attractorPosition = new THREE.Vector3()
+          .copy(camera.position)
+          .add(forwardDirection.clone().multiplyScalar(distance));
+        
+        // Add attractor to state
+        const newAttractor = {
+          id: attractorIdCounter.current++,
+          position: [attractorPosition.x, attractorPosition.y, attractorPosition.z],
+        };
+        setAttractors((prev) => [...prev, newAttractor]);
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyPress);
+    return () => {
+      window.removeEventListener("keydown", handleKeyPress);
+    };
+  }, [editorVisible, camera]);
+
+  // Handle "X" keypress to remove all attractors
+  useEffect(() => {
+    const handleKeyPress = (event) => {
+      // Only work in VIEW mode (when editor is not visible)
+      if ((event.key === "x" || event.key === "X") && !editorVisible) {
+        event.preventDefault();
+        setAttractors([]);
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyPress);
+    return () => {
+      window.removeEventListener("keydown", handleKeyPress);
+    };
+  }, [editorVisible]);
 
   // Handle click for lock mode object placement
   useEffect(() => {
@@ -446,6 +495,16 @@ const Scene = () => {
       {chains}
       {balls}
       <Floor ref={floorRef} />
+      {/* Render ephemeral attractors (not editable, not persisted) */}
+      {attractors.map((attractor) => (
+        <Attractor
+          key={attractor.id}
+          position={attractor.position}
+          range={10}
+          strength={5}
+          type="linear"
+        />
+      ))}
     </>
   );
 };
