@@ -11,7 +11,12 @@ import { Column } from "./Column";
 import { folder, useControls } from "leva";
 import { Chain } from "./Chain";
 import { Floor } from "./Floor";
-import { toArray, removeTransformProps, createMatrixFromTransform, decomposeMatrix } from "./utils";
+import {
+  toArray,
+  removeTransformProps,
+  createMatrixFromTransform,
+  decomposeMatrix,
+} from "./utils";
 import { useThree } from "@react-three/fiber";
 import { useSceneConfig } from "./useSceneConfig";
 import { useEditor } from "./useEditor";
@@ -19,10 +24,26 @@ import { Ball } from "./Ball";
 import { EditableItem } from "./EditableItem";
 import { CameraIndicator } from "./CameraIndicator";
 import { useClickHandler } from "./ClickHandlerContext";
+import { FirstPersonControls } from "./FirstPersonControls";
 import * as THREE from "three";
 
 const Scene = () => {
-  const { sceneConfig, updateArc, updateColumn, updateChain, updateBall, updateCamera, deleteArc, deleteColumn, deleteChain, deleteBall, addArc, addColumn, addChain, addBall } = useSceneConfig();
+  const {
+    sceneConfig,
+    updateArc,
+    updateColumn,
+    updateChain,
+    updateBall,
+    updateCamera,
+    deleteArc,
+    deleteColumn,
+    deleteChain,
+    deleteBall,
+    addArc,
+    addColumn,
+    addChain,
+    addBall,
+  } = useSceneConfig();
   const { editorVisible, lockMode, selectedTool } = useEditor();
   const { triggerAllClicks } = useClickHandler();
   const floorRef = useRef();
@@ -53,11 +74,7 @@ const Scene = () => {
             onDelete={() => deleteArc(i)}
             index={i}
           >
-            <Arch 
-              envMapIntensity={envMapIntensity} 
-              castShadow 
-              {...archProps}
-            />
+            <Arch envMapIntensity={envMapIntensity} castShadow {...archProps} />
           </EditableItem>
         );
       }),
@@ -77,15 +94,21 @@ const Scene = () => {
             onDelete={() => deleteColumn(i)}
             index={i}
           >
-            <Column 
-              envMapIntensity={envMapIntensity} 
-              castShadow 
+            <Column
+              envMapIntensity={envMapIntensity}
+              castShadow
               {...columnProps}
             />
           </EditableItem>
         );
       }),
-    [envMapIntensity, sceneConfig.columns, editorVisible, updateColumn, deleteColumn]
+    [
+      envMapIntensity,
+      sceneConfig.columns,
+      editorVisible,
+      updateColumn,
+      deleteColumn,
+    ]
   );
   const chains = useMemo(
     () =>
@@ -110,7 +133,13 @@ const Scene = () => {
           </EditableItem>
         );
       }),
-    [envMapIntensity, sceneConfig.chains, editorVisible, updateChain, deleteChain]
+    [
+      envMapIntensity,
+      sceneConfig.chains,
+      editorVisible,
+      updateChain,
+      deleteChain,
+    ]
   );
 
   const balls = useMemo(
@@ -183,6 +212,7 @@ const Scene = () => {
     }
   }, [sceneConfig.camera, editorVisible]);
 
+
   // Handle "T" keypress to trigger all click actions in VIEW mode
   useEffect(() => {
     const handleKeyPress = (event) => {
@@ -220,7 +250,7 @@ const Scene = () => {
       // Raycast against the floor
       if (floorRef.current) {
         const intersects = raycaster.intersectObject(floorRef.current, false);
-        
+
         if (intersects.length > 0) {
           const hitPoint = intersects[0].point;
           // Place object slightly above the floor (y = 0)
@@ -228,16 +258,16 @@ const Scene = () => {
 
           // Add the appropriate object based on selected tool
           switch (selectedTool) {
-            case 'arc':
+            case "arc":
               addArc(position);
               break;
-            case 'column':
+            case "column":
               addColumn(position);
               break;
-            case 'chain':
+            case "chain":
               addChain(position);
               break;
-            case 'ball':
+            case "ball":
               addBall(position);
               break;
             default:
@@ -247,22 +277,33 @@ const Scene = () => {
       }
     };
 
-    gl.domElement.addEventListener('click', handleClick);
+    gl.domElement.addEventListener("click", handleClick);
     return () => {
-      gl.domElement.removeEventListener('click', handleClick);
+      gl.domElement.removeEventListener("click", handleClick);
     };
-  }, [editorVisible, lockMode, selectedTool, raycaster, camera, gl, addArc, addColumn, addChain, addBall]);
+  }, [
+    editorVisible,
+    lockMode,
+    selectedTool,
+    raycaster,
+    camera,
+    gl,
+    addArc,
+    addColumn,
+    addChain,
+    addBall,
+  ]);
 
   // Handle camera transform end (similar to EditableItem)
   const handleCameraTransformEnd = (l, deltaL, w) => {
     requestAnimationFrame(() => {
       let matrix = null;
-      
+
       if (cameraGroupRef.current) {
         cameraGroupRef.current.updateMatrixWorld(true);
         matrix = cameraGroupRef.current.matrixWorld.clone();
       }
-      
+
       if (!matrix) {
         matrix = w || l;
       }
@@ -272,7 +313,11 @@ const Scene = () => {
           const transform = decomposeMatrix(matrix);
           updateCamera(transform);
         } catch (error) {
-          console.error("Error updating camera transform:", error, { l, w, matrix });
+          console.error("Error updating camera transform:", error, {
+            l,
+            w,
+            matrix,
+          });
         }
       } else {
         console.warn("Invalid matrix in camera onDragEnd:", { l, w, matrix });
@@ -290,10 +335,13 @@ const Scene = () => {
     );
   }, [sceneConfig.camera]);
 
+
   return (
     <>
+      {!editorVisible && <FirstPersonControls enabled={!editorVisible} moveSpeed={2} />}
       {editorVisible && (
         <OrbitControls
+          key="editor-orbit-controls"
           ref={orbitControls}
           makeDefault
           enabled={!lockMode}
@@ -308,10 +356,12 @@ const Scene = () => {
       {/* Perspective Camera for normal mode */}
       <PerspectiveCamera
         ref={perspectiveCameraRef}
-        {...(!editorVisible && sceneConfig.camera ? {
-          position: sceneConfig.camera.position,
-          rotation: sceneConfig.camera.rotation,
-        } : {})}
+        {...(!editorVisible && sceneConfig.camera
+          ? {
+              position: sceneConfig.camera.position,
+              rotation: sceneConfig.camera.rotation,
+            }
+          : {})}
         makeDefault={!editorVisible}
         fov={75}
         near={0.1}
