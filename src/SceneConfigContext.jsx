@@ -1,14 +1,49 @@
-import { createContext, useState, useCallback } from "react";
+import { createContext, useState, useCallback, useEffect, useRef } from "react";
 import sceneConfigData from "./sceneConfig.json";
 
 export const SceneConfigContext = createContext(null);
 
+const STORAGE_KEY = "falling-follies-scene-config";
+
+// Helper function to get initial config from localStorage or fallback to default
+const getInitialConfig = () => {
+  try {
+    const saved = localStorage.getItem(STORAGE_KEY);
+    if (saved) {
+      const parsed = JSON.parse(saved);
+      return {
+        ...parsed,
+        balls: parsed.balls || [],
+        camera: parsed.camera || sceneConfigData.camera,
+      };
+    }
+  } catch (error) {
+    console.error("Failed to load scene config from localStorage:", error);
+  }
+  return {
+    ...sceneConfigData,
+    balls: sceneConfigData.balls || [],
+    camera: sceneConfigData.camera,
+  };
+};
+
 export const SceneConfigProvider = ({ children }) => {
-  const [sceneConfig, setSceneConfig] = useState({
+  const initialConfigRef = useRef({
     ...sceneConfigData,
     balls: sceneConfigData.balls || [],
     camera: sceneConfigData.camera,
   });
+
+  const [sceneConfig, setSceneConfig] = useState(getInitialConfig);
+
+  // Save to localStorage whenever sceneConfig changes
+  useEffect(() => {
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(sceneConfig));
+    } catch (error) {
+      console.error("Failed to save scene config to localStorage:", error);
+    }
+  }, [sceneConfig]);
 
   const addArc = useCallback(() => {
     setSceneConfig((prev) => ({
@@ -222,6 +257,20 @@ export const SceneConfigProvider = ({ children }) => {
     }
   }, [sceneConfig]);
 
+  const resetSceneConfig = useCallback(() => {
+    const resetConfig = {
+      ...initialConfigRef.current,
+      balls: initialConfigRef.current.balls || [],
+      camera: initialConfigRef.current.camera,
+    };
+    setSceneConfig(resetConfig);
+    try {
+      localStorage.removeItem(STORAGE_KEY);
+    } catch (error) {
+      console.error("Failed to clear localStorage:", error);
+    }
+  }, []);
+
   return (
     <SceneConfigContext.Provider
       value={{
@@ -240,6 +289,7 @@ export const SceneConfigProvider = ({ children }) => {
         deleteColumn,
         deleteChain,
         deleteBall,
+        resetSceneConfig,
       }}
     >
       {children}

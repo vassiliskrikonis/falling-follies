@@ -11,15 +11,20 @@ import { SceneConfigProvider } from "./SceneConfigContext.jsx";
 import { EditorProvider } from "./EditorContext.jsx";
 import { ClickHandlerProvider } from "./ClickHandlerContext.jsx";
 import { useEditor } from "./useEditor.js";
+import { useSceneConfig } from "./useSceneConfig.js";
 
 const App = () => {
   const { editorVisible, toggleEditor } = useEditor();
+  const { resetSceneConfig } = useSceneConfig();
 
   useEffect(() => {
     const handleKeyDown = (event) => {
       if (event.key === "Tab") {
         event.preventDefault();
         toggleEditor();
+      } else if (event.key === "r" || event.key === "R") {
+        event.preventDefault();
+        resetSceneConfig();
       }
     };
 
@@ -27,7 +32,7 @@ const App = () => {
     return () => {
       window.removeEventListener("keydown", handleKeyDown);
     };
-  }, [toggleEditor]);
+  }, [toggleEditor, resetSceneConfig]);
 
   return (
     <>
