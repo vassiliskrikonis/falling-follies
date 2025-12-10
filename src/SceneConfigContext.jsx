@@ -257,6 +257,87 @@ export const SceneConfigProvider = ({ children }) => {
     }
   }, [sceneConfig]);
 
+  const exportSceneConfig = useCallback(() => {
+    try {
+      const configToExport = {
+        camera: sceneConfig.camera,
+        arches: sceneConfig.arches,
+        columns: sceneConfig.columns,
+        chains: sceneConfig.chains,
+        ...(sceneConfig.balls && sceneConfig.balls.length > 0
+          ? { balls: sceneConfig.balls }
+          : {}),
+      };
+      const jsonString = JSON.stringify(configToExport, null, 2);
+      const blob = new Blob([jsonString], { type: "application/json" });
+      const url = URL.createObjectURL(blob);
+      const timestamp = new Date().toISOString().replace(/[:.]/g, "-").slice(0, -5);
+      const filename = `scene-config-${timestamp}.json`;
+      
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = filename;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+    } catch (err) {
+      console.error("Failed to export scene config:", err);
+    }
+  }, [sceneConfig]);
+
+  const importSceneConfig = useCallback((jsonData) => {
+    try {
+      let parsedData;
+      if (typeof jsonData === "string") {
+        parsedData = JSON.parse(jsonData);
+      } else {
+        parsedData = jsonData;
+      }
+
+      // Validate structure
+      if (!parsedData || typeof parsedData !== "object") {
+        throw new Error("Invalid JSON structure");
+      }
+
+      // Validate required fields
+      if (!parsedData.camera || !Array.isArray(parsedData.camera.position) || !Array.isArray(parsedData.camera.rotation)) {
+        throw new Error("Invalid camera configuration");
+      }
+
+      if (!Array.isArray(parsedData.arches)) {
+        throw new Error("Invalid arches array");
+      }
+
+      if (!Array.isArray(parsedData.columns)) {
+        throw new Error("Invalid columns array");
+      }
+
+      if (!Array.isArray(parsedData.chains)) {
+        throw new Error("Invalid chains array");
+      }
+
+      // Balls are optional, but if present should be an array
+      if (parsedData.balls !== undefined && !Array.isArray(parsedData.balls)) {
+        throw new Error("Invalid balls array");
+      }
+
+      // Replace scene config with imported data
+      const importedConfig = {
+        camera: parsedData.camera,
+        arches: parsedData.arches,
+        columns: parsedData.columns,
+        chains: parsedData.chains,
+        balls: parsedData.balls || [],
+      };
+
+      setSceneConfig(importedConfig);
+    } catch (error) {
+      console.error("Failed to import scene config:", error);
+      alert(`Failed to import scene config: ${error.message}`);
+    }
+  }, []);
+
   const resetSceneConfig = useCallback(() => {
     const resetConfig = {
       ...initialConfigRef.current,
@@ -285,6 +366,8 @@ export const SceneConfigProvider = ({ children }) => {
         updateBall,
         updateCamera,
         copySceneConfig,
+        exportSceneConfig,
+        importSceneConfig,
         deleteArc,
         deleteColumn,
         deleteChain,
