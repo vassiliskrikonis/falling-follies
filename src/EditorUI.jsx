@@ -1,5 +1,6 @@
 import "./EditorUI.css";
 import { useSceneConfig } from "./useSceneConfig";
+import { useEditor } from "./useEditor";
 import { useRef } from "react";
 
 export const EditorUI = () => {
@@ -12,6 +13,7 @@ export const EditorUI = () => {
     exportSceneConfig,
     importSceneConfig,
   } = useSceneConfig();
+  const { lockMode, toggleLockMode, selectedTool, setSelectedTool } = useEditor();
   const fileInputRef = useRef(null);
 
   const handleImportClick = () => {
@@ -42,36 +44,71 @@ export const EditorUI = () => {
     event.target.value = "";
   };
 
+  const handleToolClick = (tool) => {
+    if (lockMode) {
+      // In lock mode, select the tool
+      setSelectedTool(tool);
+    } else {
+      // Normal mode, add object immediately
+      switch (tool) {
+        case 'arc':
+          addArc();
+          break;
+        case 'column':
+          addColumn();
+          break;
+        case 'chain':
+          addChain();
+          break;
+        case 'ball':
+          addBall();
+          break;
+        default:
+          break;
+      }
+    }
+  };
+
   return (
     <div className="editor-ui">
       <div className="editor-toolbar">
         <button
-          className="editor-button"
-          onClick={addArc}
+          className={`editor-button ${lockMode ? 'editor-button-active' : ''}`}
+          onClick={toggleLockMode}
+          title={lockMode ? "Disable Lock Mode" : "Enable Lock Mode"}
+          aria-label={lockMode ? "Disable Lock Mode" : "Enable Lock Mode"}
+        >
+          {lockMode ? '🔒' : '🔓'}
+        </button>
+      </div>
+      <div className="editor-toolbar">
+        <button
+          className={`editor-button ${lockMode && selectedTool === 'arc' ? 'editor-button-active' : ''}`}
+          onClick={() => handleToolClick('arc')}
           title="Add Arc"
           aria-label="Add Arc"
         >
           🏛️
         </button>
         <button
-          className="editor-button"
-          onClick={addColumn}
+          className={`editor-button ${lockMode && selectedTool === 'column' ? 'editor-button-active' : ''}`}
+          onClick={() => handleToolClick('column')}
           title="Add Column"
           aria-label="Add Column"
         >
           💈
         </button>
         <button
-          className="editor-button"
-          onClick={addChain}
+          className={`editor-button ${lockMode && selectedTool === 'chain' ? 'editor-button-active' : ''}`}
+          onClick={() => handleToolClick('chain')}
           title="Add Chain"
           aria-label="Add Chain"
         >
           ⛓️
         </button>
         <button
-          className="editor-button"
-          onClick={addBall}
+          className={`editor-button ${lockMode && selectedTool === 'ball' ? 'editor-button-active' : ''}`}
+          onClick={() => handleToolClick('ball')}
           title="Add Ball"
           aria-label="Add Ball"
         >

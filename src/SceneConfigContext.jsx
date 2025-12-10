@@ -45,13 +45,13 @@ export const SceneConfigProvider = ({ children }) => {
     }
   }, [sceneConfig]);
 
-  const addArc = useCallback(() => {
+  const addArc = useCallback((position = [0, 0, 0]) => {
     setSceneConfig((prev) => ({
       ...prev,
       arches: [
         ...prev.arches,
         {
-          position: [0, 0, 0],
+          position,
           rotation: [0, 0, 0],
           scale: 1,
         },
@@ -59,13 +59,13 @@ export const SceneConfigProvider = ({ children }) => {
     }));
   }, []);
 
-  const addColumn = useCallback(() => {
+  const addColumn = useCallback((position = [0, 0, 0]) => {
     setSceneConfig((prev) => ({
       ...prev,
       columns: [
         ...prev.columns,
         {
-          position: [0, 0, 0],
+          position,
           rotation: [0, 0, 0],
           scale: 1,
         },
@@ -73,13 +73,13 @@ export const SceneConfigProvider = ({ children }) => {
     }));
   }, []);
 
-  const addChain = useCallback(() => {
+  const addChain = useCallback((position = [0, 0, 0]) => {
     setSceneConfig((prev) => ({
       ...prev,
       chains: [
         ...prev.chains,
         {
-          position: [0, 0, 0],
+          position,
           rotation: [0, 0, 0],
           scale: 1,
           radius: 0.4,
@@ -88,13 +88,13 @@ export const SceneConfigProvider = ({ children }) => {
     }));
   }, []);
 
-  const addBall = useCallback(() => {
+  const addBall = useCallback((position = [0, 0, 0]) => {
     setSceneConfig((prev) => ({
       ...prev,
       balls: [
         ...(prev.balls || []),
         {
-          position: [0, 0, 0],
+          position,
           rotation: [0, 0, 0],
           scale: 1,
           radius: 0.2,

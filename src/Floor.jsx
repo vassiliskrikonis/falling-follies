@@ -1,8 +1,9 @@
 import { Circle, MeshReflectorMaterial } from "@react-three/drei";
 import { LevaInputs, folder, useControls } from "leva";
 import { RigidBody } from "@react-three/rapier";
+import { forwardRef } from "react";
 
-export function Floor(props) {
+export const Floor = forwardRef(function Floor(props, ref) {
   const mirrorControls = useControls("Floor", {
     mirror: folder({
       color: "#bebebe",
@@ -28,9 +29,9 @@ export function Floor(props) {
       type="fixed"
       {...props}
     >
-      <Circle receiveShadow args={[22]}>
+      <Circle ref={ref} receiveShadow args={[22]}>
         <MeshReflectorMaterial {...mirrorControls} />
       </Circle>
     </RigidBody>
   );
-}
+});

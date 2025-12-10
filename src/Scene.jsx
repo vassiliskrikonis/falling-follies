@@ -22,9 +22,10 @@ import { useClickHandler } from "./ClickHandlerContext";
 import * as THREE from "three";
 
 const Scene = () => {
-  const { sceneConfig, updateArc, updateColumn, updateChain, updateBall, updateCamera, deleteArc, deleteColumn, deleteChain, deleteBall } = useSceneConfig();
-  const { editorVisible } = useEditor();
+  const { sceneConfig, updateArc, updateColumn, updateChain, updateBall, updateCamera, deleteArc, deleteColumn, deleteChain, deleteBall, addArc, addColumn, addChain, addBall } = useSceneConfig();
+  const { editorVisible, lockMode, selectedTool } = useEditor();
   const { triggerAllClicks } = useClickHandler();
+  const floorRef = useRef();
   const controls = useControls("Environment", {
     ambientLight: 1.5,
     envMapIntensity: { value: 0.7, min: 0, max: 12 },
@@ -149,7 +150,7 @@ const Scene = () => {
   });
   const orbitControls = useRef();
   const orthoCameraRef = useRef();
-  const { size } = useThree();
+  const { size, raycaster, camera, gl } = useThree();
 
   // Calculate isometric camera position (30° elevation angle from horizontal)
   const isometricDistance = 15;
@@ -199,6 +200,59 @@ const Scene = () => {
     };
   }, [editorVisible, triggerAllClicks]);
 
+  // Handle click for lock mode object placement
+  useEffect(() => {
+    if (!editorVisible || !lockMode || !selectedTool) return;
+
+    const handleClick = (event) => {
+      // Prevent default behavior
+      event.stopPropagation();
+
+      // Get mouse coordinates
+      const rect = gl.domElement.getBoundingClientRect();
+      const mouse = new THREE.Vector2();
+      mouse.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
+      mouse.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
+
+      // Update raycaster
+      raycaster.setFromCamera(mouse, camera);
+
+      // Raycast against the floor
+      if (floorRef.current) {
+        const intersects = raycaster.intersectObject(floorRef.current, false);
+        
+        if (intersects.length > 0) {
+          const hitPoint = intersects[0].point;
+          // Place object slightly above the floor (y = 0)
+          const position = [hitPoint.x, 0, hitPoint.z];
+
+          // Add the appropriate object based on selected tool
+          switch (selectedTool) {
+            case 'arc':
+              addArc(position);
+              break;
+            case 'column':
+              addColumn(position);
+              break;
+            case 'chain':
+              addChain(position);
+              break;
+            case 'ball':
+              addBall(position);
+              break;
+            default:
+              break;
+          }
+        }
+      }
+    };
+
+    gl.domElement.addEventListener('click', handleClick);
+    return () => {
+      gl.domElement.removeEventListener('click', handleClick);
+    };
+  }, [editorVisible, lockMode, selectedTool, raycaster, camera, gl, addArc, addColumn, addChain, addBall]);
+
   // Handle camera transform end (similar to EditableItem)
   const handleCameraTransformEnd = (l, deltaL, w) => {
     requestAnimationFrame(() => {
@@ -242,6 +296,7 @@ const Scene = () => {
         <OrbitControls
           ref={orbitControls}
           makeDefault
+          enabled={!lockMode}
           maxDistance={cameraControls.maxDistance}
           target={[
             cameraControls.target.x,
@@ -314,7 +369,7 @@ const Scene = () => {
       {columns}
       {chains}
       {balls}
-      <Floor />
+      <Floor ref={floorRef} />
     </>
   );
 };
