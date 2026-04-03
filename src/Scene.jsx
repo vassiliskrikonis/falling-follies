@@ -1,13 +1,15 @@
-import { Environment, OrbitControls } from "@react-three/drei";
+import { Environment } from "@react-three/drei";
 import { Arch } from "./Arch";
 import { Column } from "./Column";
 import { folder, useControls } from "leva";
 import { Chain } from "./Chain";
 import { Floor } from "./Floor";
-import { useMemo, useRef } from "react";
+import { useEffect, useMemo, useRef } from "react";
 import { toArray } from "./utils";
 import { useThree } from "@react-three/fiber";
+
 import sceneConfig from "./sceneConfig.json";
+import { useKeyboardMovement } from "./useKeyboardMovement";
 
 const Scene = () => {
   const controls = useControls("Environment", {
@@ -66,23 +68,30 @@ const Scene = () => {
       z: 2.9,
     },
     target: { x: 0, y: 1.7, z: 0 },
-    maxDistance: 28,
   });
-  const orbitControls = useRef();
-  useThree(({ camera }) => {
-    camera.position.copy(cameraControls.position);
-    if (orbitControls.current) {
-      orbitControls.current.target.copy(cameraControls.target);
+
+  const camera = useThree((state) => state.camera);
+  const initialized = useRef(false);
+  useEffect(() => {
+    if (!initialized.current) {
+      camera.position.set(
+        cameraControls.position.x,
+        cameraControls.position.y,
+        cameraControls.position.z
+      );
+      camera.lookAt(
+        cameraControls.target.x,
+        cameraControls.target.y,
+        cameraControls.target.z
+      );
+      initialized.current = true;
     }
-  });
+  }, []);
+
+  useKeyboardMovement();
 
   return (
     <>
-      <OrbitControls
-        ref={orbitControls}
-        makeDefault
-        maxDistance={cameraControls.maxDistance}
-      />
       <Environment
         ground={{ height: 0, radius: 28, scale: 100 }}
         files={"./kloofendal_48d_partly_cloudy_puresky_2k.hdr"}
