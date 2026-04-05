@@ -39,6 +39,7 @@ ReactDOM.createRoot(document.getElementById("root")).render(
         </Physics>
       </Canvas>
     </KeyboardControls>
+    <div className="crosshair" />
     <LoadingScreen />
   </React.StrictMode>
 );
