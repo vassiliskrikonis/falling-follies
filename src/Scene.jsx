@@ -10,6 +10,7 @@ import { useThree } from "@react-three/fiber";
 
 import sceneConfig from "./sceneConfig.json";
 import { useKeyboardMovement } from "./useKeyboardMovement";
+import { useGamepadMovement } from "./useGamepadMovement";
 
 const Scene = ({ isMobile, joystickRef }) => {
   const controls = useControls("Environment", {
@@ -89,6 +90,7 @@ const Scene = ({ isMobile, joystickRef }) => {
   }, []);
 
   useKeyboardMovement(isMobile, joystickRef);
+  useGamepadMovement();
 
   return (
     <>
