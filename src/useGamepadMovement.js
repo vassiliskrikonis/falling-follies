@@ -1,9 +1,9 @@
 import { useFrame, useThree } from "@react-three/fiber";
 import { useRef } from "react";
 import * as THREE from "three";
+import { applyMovement } from "./movement";
 
 const DEAD_ZONE = 0.12;
-const MOVE_SPEED = 5;
 const LOOK_SPEED = 2.5;
 
 const CLICK_BUTTONS = [0, 2, 6, 7]; // A/Cross, X/Square, LT/L2, RT/R2
@@ -47,8 +47,6 @@ function getActiveGamepad(gamepads) {
 export function useGamepadMovement() {
   const { camera, raycaster, scene } = useThree();
   const euler = useRef(new THREE.Euler(0, 0, 0, "YXZ"));
-  const forward = useRef(new THREE.Vector3());
-  const sideways = useRef(new THREE.Vector3());
   const prevButtonPressed = useRef(false);
 
   useFrame((_, delta) => {
@@ -69,13 +67,7 @@ export function useGamepadMovement() {
     }
 
     if (moveX || moveY) {
-      camera.getWorldDirection(forward.current);
-      forward.current.y = 0;
-      forward.current.normalize();
-      sideways.current.crossVectors(forward.current, camera.up).normalize();
-
-      camera.position.addScaledVector(forward.current, -moveY * MOVE_SPEED * delta);
-      camera.position.addScaledVector(sideways.current, moveX * MOVE_SPEED * delta);
+      applyMovement(camera, moveX, -moveY, delta); // Invert Y for typical gamepad layout
     }
 
     // Right stick look
