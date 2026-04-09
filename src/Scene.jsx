@@ -1,15 +1,15 @@
-import { Environment, useKeyboardControls } from "@react-three/drei";
+import { Environment } from "@react-three/drei";
 import { Arch } from "./Arch";
 import { Column } from "./Column";
 import { folder, useControls } from "leva";
 import { Chain } from "./Chain";
 import { Floor } from "./Floor";
-import { useCallback, useEffect, useMemo, useRef } from "react";
+import { useEffect, useMemo, useRef } from "react";
 import { toArray } from "./utils";
 import { useThree } from "@react-three/fiber";
 
 import sceneConfig from "./sceneConfig.json";
-import { useMovement } from "./useMovement";
+import { useKeyboardMovement } from "./useKeyboardMovement";
 
 const Scene = ({ isMobile, joystickRef }) => {
   const controls = useControls("Environment", {
@@ -88,19 +88,7 @@ const Scene = ({ isMobile, joystickRef }) => {
     }
   }, []);
 
-  const [, getKeys] = useKeyboardControls();
-  const getInput = useCallback(() => {
-    if (isMobile) {
-      return { x: joystickRef.current.x, y: joystickRef.current.y };
-    }
-    const k = getKeys();
-    return {
-      x: (k.right ? 1 : 0) - (k.left ? 1 : 0),
-      y: (k.forward ? 1 : 0) - (k.back ? 1 : 0),
-    };
-  }, [isMobile, joystickRef, getKeys]);
-
-  useMovement(getInput);
+  useKeyboardMovement(isMobile, joystickRef);
 
   return (
     <>
