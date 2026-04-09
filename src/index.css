@@ -9,6 +9,12 @@
     height: 100%;
     margin: 0;
     padding: 0;
+    overflow: hidden;
+    overscroll-behavior: none;
+  }
+
+  canvas {
+    touch-action: none;
   }
   
   body {
@@ -25,4 +31,10 @@
     transform: translate3d(-50%, -50%, 0);
     border: 2px solid white;
     pointer-events: none;
+  }
+
+  @media (pointer: coarse) {
+    .crosshair {
+      display: none;
+    }
   }
