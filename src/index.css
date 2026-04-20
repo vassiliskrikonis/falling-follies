@@ -19,17 +19,5 @@
     position: fixed;
     bottom: 24px;
     right: 24px;
-    padding: 10px 20px;
-    background: rgba(0, 0, 0, 0.6);
-    color: #fff;
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    border-radius: 8px;
-    font-size: 14px;
-    cursor: pointer;
     z-index: 10;
-    transition: background 0.2s;
-  }
-
-  .restart-button:hover {
-    background: rgba(0, 0, 0, 0.8);
   }

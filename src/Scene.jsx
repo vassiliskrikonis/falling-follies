@@ -4,7 +4,7 @@ import { Column } from "./Column";
 import { folder, useControls } from "leva";
 import { Chain } from "./Chain";
 import { Floor } from "./Floor";
-import { useMemo, useRef } from "react";
+import { useEffect, useMemo, useRef } from "react";
 import { toArray } from "./utils";
 import { useThree } from "@react-three/fiber";
 import sceneConfig from "./sceneConfig.json";
@@ -69,12 +69,16 @@ const Scene = () => {
     maxDistance: 28,
   });
   const orbitControls = useRef();
-  useThree(({ camera }) => {
+  const { camera } = useThree();
+  // Set initial camera position only on mount (empty deps) so it doesn't
+  // reset when unrelated state changes (e.g. pause/resume) trigger re-renders.
+  useEffect(() => {
     camera.position.copy(cameraControls.position);
     if (orbitControls.current) {
       orbitControls.current.target.copy(cameraControls.target);
     }
-  });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <>

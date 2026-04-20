@@ -7,19 +7,37 @@ import { Physics } from "@react-three/rapier";
 import { Leva } from "leva";
 import { AnimatePresence, motion } from "framer-motion";
 import { LoadingScreen } from "./LoadingScreen.jsx";
+import { GameMenu } from "./GameMenu.jsx";
+import { MenuButton } from "./MenuButton.jsx";
 
 // eslint-disable-next-line react-refresh/only-export-components
 const App = () => {
   const [resetKey, setResetKey] = useState(0);
+  const [isPaused, setIsPaused] = useState(false);
+
   const restart = useCallback(() => setResetKey((k) => k + 1), []);
+
+  const handleResume = useCallback(() => {
+    setIsPaused(false);
+  }, []);
+
+  const handleRestart = useCallback(() => {
+    restart();
+    setIsPaused(false);
+  }, [restart]);
 
   useEffect(() => {
     const handleKeyDown = (e) => {
-      if (e.key === "r" || e.key === "R") restart();
+      if (e.key === "Escape") {
+        setIsPaused((p) => !p);
+      }
+      if ((e.key === "r" || e.key === "R") && !isPaused) {
+        restart();
+      }
     };
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [restart]);
+  }, [restart, isPaused]);
 
   return (
     <>
@@ -43,21 +61,30 @@ const App = () => {
         </Physics>
       </Canvas>
       <LoadingScreen />
-      <AnimatePresence>
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1, transition: { duration: 0.5, delay: 1 } }}
-          exit={{ opacity: 0, transition: { duration: 0.3 } }}
-        >
-          <button
-            className="restart-button"
-            onClick={restart}
-            aria-label="Restart scene"
+      <GameMenu
+        isOpen={isPaused}
+        isPaused={isPaused}
+        onResume={handleResume}
+        onRestart={handleRestart}
+      />
+      {!isPaused && (
+        <AnimatePresence>
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1, transition: { duration: 0.5, delay: 1 } }}
+            exit={{ opacity: 0, transition: { duration: 0.3 } }}
           >
-            Restart
-          </button>
-        </motion.div>
-      </AnimatePresence>
+            <MenuButton
+              className="restart-button"
+              size={16}
+              onClick={restart}
+              aria-label="Restart scene"
+            >
+              Restart
+            </MenuButton>
+          </motion.div>
+        </AnimatePresence>
+      )}
     </>
   );
 };
