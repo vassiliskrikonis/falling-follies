@@ -3,6 +3,7 @@ import { useControls } from "leva";
 import { useMemo, useRef } from "react";
 import * as THREE from "three";
 import { RigidBody } from "@react-three/rapier";
+import { useHoverEffect } from "./useHoverEffect";
 
 export function Column({ castShadow = false, envMapIntensity, ...props }) {
   const { nodes } = useGLTF("/column.glb");
@@ -22,6 +23,7 @@ export function Column({ castShadow = false, envMapIntensity, ...props }) {
   );
 
   const rigidBody = useRef();
+  const hoverHandlers = useHoverEffect();
 
   return (
     <RigidBody ref={rigidBody} {...props}>
@@ -48,6 +50,7 @@ export function Column({ castShadow = false, envMapIntensity, ...props }) {
             true
           );
         }}
+        {...hoverHandlers}
       />
     </RigidBody>
   );

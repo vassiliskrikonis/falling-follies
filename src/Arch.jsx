@@ -4,6 +4,7 @@ import { createRef, useEffect, useMemo, useRef } from "react";
 import { Arc } from "./Arc";
 import { CylinderCollider, RigidBody } from "@react-three/rapier";
 import * as THREE from "three";
+import { useHoverEffect } from "./useHoverEffect";
 
 const toArray = ({ x, y, z }) => [x, y, z];
 
@@ -59,6 +60,8 @@ export function Arch({ castShadow = false, envMapIntensity, ...props }) {
     });
   }
 
+  const roofHoverHandlers = useHoverEffect(null);
+
   const roofRef = useRef();
   const columnRefs = useRef(
     Array.from({ length: generalControls.columns }).map(() => createRef())
@@ -86,6 +89,7 @@ export function Arch({ castShadow = false, envMapIntensity, ...props }) {
             const mass = roofRef.current.mass();
             roofRef.current.applyImpulse({ x: 0, y: 3 * mass, z: 0 }, true);
           }}
+          {...roofHoverHandlers}
         />
       </RigidBody>
       {positions.map((p, i) => (

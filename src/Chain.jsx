@@ -1,12 +1,15 @@
 import { useRef } from "react";
 import { Ball } from "./Ball";
 import { useSphericalJoint } from "@react-three/rapier";
+import { useHoverEffect } from "./useHoverEffect";
 
 export function Chain({ envMapIntensity, radius = 0.2, ...props }) {
   const base = useRef();
   const ball1 = useRef();
   const ball2 = useRef();
   const ball3 = useRef();
+
+  const hoverHandlers = useHoverEffect();
 
   useSphericalJoint(base, ball1, [
     [0, radius, 0],
@@ -22,7 +25,7 @@ export function Chain({ envMapIntensity, radius = 0.2, ...props }) {
   ]);
 
   return (
-    <group {...props}>
+    <group {...props} {...hoverHandlers}>
       <Ball
         ref={base}
         radius={radius}
