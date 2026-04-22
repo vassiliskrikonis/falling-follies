@@ -2,7 +2,7 @@ import { AnimatePresence, motion, easeOut } from "framer-motion";
 import { MenuButton } from "./MenuButton.jsx";
 import "./GameMenu.css";
 
-export const GameMenu = ({ isOpen, onResume, onRestart }) => {
+export const GameMenu = ({ isOpen, onResume, onRestart, onHelp }) => {
   return (
     <AnimatePresence>
       {isOpen && (
@@ -20,6 +20,7 @@ export const GameMenu = ({ isOpen, onResume, onRestart }) => {
           <div className="menu-buttons">
             <MenuButton onClick={onResume}>Resume</MenuButton>
             <MenuButton onClick={onRestart}>Restart</MenuButton>
+            <MenuButton onClick={onHelp}>Help</MenuButton>
           </div>
         </motion.div>
       )}

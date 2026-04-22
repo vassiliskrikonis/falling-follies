@@ -9,11 +9,13 @@ import { AnimatePresence, motion } from "framer-motion";
 import { LoadingScreen } from "./LoadingScreen.jsx";
 import { GameMenu } from "./GameMenu.jsx";
 import { MenuButton } from "./MenuButton.jsx";
+import { Instructions } from "./Instructions.jsx";
 
 // eslint-disable-next-line react-refresh/only-export-components
 const App = () => {
   const [resetKey, setResetKey] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
+  const [showInstructions, setShowInstructions] = useState(false);
 
   const restart = useCallback(() => setResetKey((k) => k + 1), []);
 
@@ -26,18 +28,35 @@ const App = () => {
     setIsPaused(false);
   }, [restart]);
 
+  const closeInstructions = useCallback(() => {
+    setShowInstructions(false);
+  }, []);
+
+  const openInstructions = useCallback(() => {
+    setShowInstructions(true);
+  }, []);
+
   useEffect(() => {
     const handleKeyDown = (e) => {
-      if (e.key === "Escape") {
-        setIsPaused((p) => !p);
+      if (e.key === "?") {
+        setShowInstructions((s) => !s);
+        return;
       }
-      if ((e.key === "r" || e.key === "R") && !isPaused) {
+      if (e.key === "Escape") {
+        if (showInstructions) {
+          closeInstructions();
+          return;
+        }
+        setIsPaused((p) => !p);
+        return;
+      }
+      if ((e.key === "r" || e.key === "R") && !isPaused && !showInstructions) {
         restart();
       }
     };
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [restart, isPaused]);
+  }, [restart, isPaused, showInstructions, closeInstructions]);
 
   return (
     <>
@@ -66,7 +85,9 @@ const App = () => {
         isPaused={isPaused}
         onResume={handleResume}
         onRestart={handleRestart}
+        onHelp={openInstructions}
       />
+      <Instructions isOpen={showInstructions} onClose={closeInstructions} />
       {!isPaused && (
         <AnimatePresence>
           <motion.div
@@ -81,6 +102,14 @@ const App = () => {
               aria-label="Restart scene"
             >
               Restart
+            </MenuButton>
+            <MenuButton
+              className="help-button"
+              size={16}
+              onClick={openInstructions}
+              aria-label="Show instructions"
+            >
+              Help
             </MenuButton>
           </motion.div>
         </AnimatePresence>
