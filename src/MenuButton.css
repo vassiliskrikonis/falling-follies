@@ -3,17 +3,14 @@
   background: none;
   border: none;
   font-size: 28px;
-  font-weight: bold;
   letter-spacing: 0.15em;
   text-transform: uppercase;
   cursor: pointer;
-  color: transparent;
-  -webkit-text-stroke: 1.5px rgba(255, 255, 255, 0.8);
-  transition: color 0.3s, -webkit-text-stroke-color 0.3s;
+  color: rgba(255, 255, 255, 0.6);
+  transition: color 0.3s;
 }
 
 .menu-button:hover,
 .menu-button:active {
   color: #fff;
-  -webkit-text-stroke: 1.5px #fff;
 }

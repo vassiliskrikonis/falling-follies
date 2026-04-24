@@ -97,7 +97,7 @@ const App = () => {
           >
             <MenuButton
               className="restart-button"
-              size={16}
+              size={24}
               onClick={restart}
               aria-label="Restart scene"
             >
@@ -105,7 +105,7 @@ const App = () => {
             </MenuButton>
             <MenuButton
               className="help-button"
-              size={16}
+              size={24}
               onClick={openInstructions}
               aria-label="Show instructions"
             >
