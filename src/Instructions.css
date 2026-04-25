@@ -34,9 +34,10 @@
 
 .instructions__label {
   text-transform: uppercase;
+  font-family: 'Rubik Bubbles', system-ui;
   letter-spacing: 0.15em;
   font-weight: bold;
-  font-size: 14px;
+  font-size: 16px;
   opacity: 0.7;
 }
 
