@@ -12,11 +12,10 @@ export const GameMenu = ({ isOpen, onResume, onRestart, onHelp }) => {
           animate={{ opacity: 1, transition: { duration: 0.3, ease: easeOut } }}
           exit={{ opacity: 0, transition: { duration: 0.5, ease: easeOut } }}
         >
-          <img
-            className="menu-logo"
-            src="/PFP_screen_logo_white.webp"
-            alt="Falling Follies logo"
-          />
+          <div>
+            <h1 className="intro-title">Falling Follies</h1>
+            <p className="intro-subtitle" style={{ marginTop: 8 }}>A shifting world of unstable forms</p>
+          </div>
           <div className="menu-buttons">
             <MenuButton onClick={onResume}>Resume</MenuButton>
             <MenuButton onClick={onRestart}>Restart</MenuButton>

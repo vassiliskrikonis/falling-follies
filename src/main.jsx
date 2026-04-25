@@ -10,6 +10,7 @@ import { LoadingScreen } from "./LoadingScreen.jsx";
 import { GameMenu } from "./GameMenu.jsx";
 import { MenuButton } from "./MenuButton.jsx";
 import { Instructions } from "./Instructions.jsx";
+import { IntroText } from "./IntroText.jsx";
 import { usePreventSelect } from "./usePreventSelect.js";
 
 // eslint-disable-next-line react-refresh/only-export-components
@@ -17,8 +18,10 @@ const App = () => {
   const [resetKey, setResetKey] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
   const [showInstructions, setShowInstructions] = useState(false);
+  const [showIntro, setShowIntro] = useState(true);
 
   const restart = useCallback(() => setResetKey((k) => k + 1), []);
+  const dismissIntro = useCallback(() => setShowIntro(false), []);
 
   const handleResume = useCallback(() => {
     setIsPaused(false);
@@ -27,6 +30,7 @@ const App = () => {
   const handleRestart = useCallback(() => {
     restart();
     setIsPaused(false);
+    setShowIntro(true);
   }, [restart]);
 
   const closeInstructions = useCallback(() => {
@@ -50,16 +54,19 @@ const App = () => {
           closeInstructions();
           return;
         }
-        setIsPaused((p) => !p);
+        setIsPaused((p) => {
+          if (!p) dismissIntro();
+          return !p;
+        });
         return;
       }
       if ((e.key === "r" || e.key === "R") && !isPaused && !showInstructions) {
-        restart();
+        handleRestart();
       }
     };
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [restart, isPaused, showInstructions, closeInstructions]);
+  }, [handleRestart, isPaused, showInstructions, closeInstructions, dismissIntro]);
 
   return (
     <>
@@ -83,6 +90,7 @@ const App = () => {
         </Physics>
       </Canvas>
       <LoadingScreen />
+      <IntroText isOpen={showIntro} onDismiss={dismissIntro} />
       <GameMenu
         isOpen={isPaused}
         isPaused={isPaused}
@@ -91,7 +99,7 @@ const App = () => {
         onHelp={openInstructions}
       />
       <Instructions isOpen={showInstructions} onClose={closeInstructions} />
-      {!isPaused && (
+      {!isPaused && !showIntro && (
         <AnimatePresence>
           <motion.div
             initial={{ opacity: 0 }}
@@ -101,7 +109,7 @@ const App = () => {
             <MenuButton
               className="restart-button"
               size={20}
-              onClick={restart}
+              onClick={handleRestart}
               aria-label="Restart scene"
             >
               Restart
