@@ -20,13 +20,13 @@ export const Instructions = ({ isOpen, onClose }) => {
             <div className="instructions__group">
               <div className="instructions__label">Camera</div>
               <div className="instructions__items">
-                Drag to rotate · Right-drag to pan · Scroll to zoom
+                Drag to rotate · Right-drag to shift · Scroll to zoom
               </div>
             </div>
             <div className="instructions__group">
               <div className="instructions__label">Objects</div>
               <div className="instructions__items">
-                Click to interact with objects
+                Click to disturb
               </div>
             </div>
             <div className="instructions__group">

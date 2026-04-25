@@ -19,14 +19,39 @@
 
   .restart-button {
     position: fixed;
-    bottom: 24px;
+    top: 24px;
     right: 24px;
     z-index: 10;
   }
 
   .help-button {
+    display: none;
     position: fixed;
-    top: 24px;
+    bottom: 24px;
     right: 24px;
     z-index: 10;
+  }
+
+  .inline-instructions {
+    position: fixed;
+    bottom: 37px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 10;
+    color: white;
+    font-size: 16px;
+    white-space: nowrap;
+    font-family: 'Rubik Bubbles', system-ui;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+  }
+
+  @media (max-width: 900px) {
+    .inline-instructions {
+      display: none;
+    }
+
+    .help-button {
+      display: block;
+    }
   }

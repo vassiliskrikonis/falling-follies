@@ -100,7 +100,7 @@ const App = () => {
           >
             <MenuButton
               className="restart-button"
-              size={24}
+              size={20}
               onClick={restart}
               aria-label="Restart scene"
             >
@@ -114,6 +114,9 @@ const App = () => {
             >
               Help
             </MenuButton>
+            <div className="inline-instructions">
+              Drag to rotate · Right-drag to shift · Scroll to zoom · Click to disturb
+            </div>
           </motion.div>
         </AnimatePresence>
       )}
