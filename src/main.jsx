@@ -10,6 +10,7 @@ import { LoadingScreen } from "./LoadingScreen.jsx";
 import { GameMenu } from "./GameMenu.jsx";
 import { MenuButton } from "./MenuButton.jsx";
 import { Instructions } from "./Instructions.jsx";
+import { usePreventSelect } from "./usePreventSelect.js";
 
 // eslint-disable-next-line react-refresh/only-export-components
 const App = () => {
@@ -35,6 +36,8 @@ const App = () => {
   const openInstructions = useCallback(() => {
     setShowInstructions(true);
   }, []);
+
+  usePreventSelect();
 
   useEffect(() => {
     const handleKeyDown = (e) => {
