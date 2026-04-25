@@ -7,11 +7,12 @@
   letter-spacing: 0.15em;
   text-transform: uppercase;
   cursor: pointer;
-  color: rgba(255, 255, 255, 0.6);
-  transition: color 0.3s;
+  color: #fff;
+  transition: color 0.3s, text-shadow 0.3s;
 }
 
 .menu-button:hover,
 .menu-button:active {
   color: #fff;
+  text-shadow: 0 0 8px rgba(255, 255, 255, 0.9), 0 0 20px rgba(255, 255, 255, 0.5);
 }
