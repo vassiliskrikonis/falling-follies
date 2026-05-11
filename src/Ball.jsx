@@ -1,10 +1,11 @@
 import { Circle, Sphere } from "@react-three/drei";
+import { HoverOutlines } from "./HoverOutlines";
 import { useControls } from "leva";
 import { RigidBody } from "@react-three/rapier";
 import { forwardRef, useCallback, useEffect } from "react";
 
 export const Ball = forwardRef(function Ball(
-  { radius = 0.2, half = false, castShadow = false, envMapIntensity, ...props },
+  { radius = 0.2, half = false, castShadow = false, envMapIntensity, hovered = false, ...props },
   ref
 ) {
   const { color } = useControls("Ball", { color: "#266c43" });
@@ -46,6 +47,7 @@ export const Ball = forwardRef(function Ball(
             color={color}
             envMapIntensity={envMapIntensity}
           />
+          {hovered && <HoverOutlines />}
         </Sphere>
         {half ? (
           <Circle
@@ -60,6 +62,7 @@ export const Ball = forwardRef(function Ball(
               color={color}
               envMapIntensity={envMapIntensity}
             />
+            {hovered && <HoverOutlines />}
           </Circle>
         ) : null}
       </RigidBody>

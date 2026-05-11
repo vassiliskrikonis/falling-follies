@@ -60,7 +60,7 @@ export function Arch({ castShadow = false, envMapIntensity, ...props }) {
     });
   }
 
-  const roofHoverHandlers = useHoverEffect(null);
+  const { hovered: roofHovered, ...roofHoverHandlers } = useHoverEffect(null);
 
   const roofRef = useRef();
   const columnRefs = useRef(
@@ -85,6 +85,7 @@ export function Arch({ castShadow = false, envMapIntensity, ...props }) {
       >
         <Arc
           castShadow={castShadow}
+          hovered={roofHovered}
           onClick={() => {
             const mass = roofRef.current.mass();
             roofRef.current.applyImpulse({ x: 0, y: 3 * mass, z: 0 }, true);

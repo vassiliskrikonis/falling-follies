@@ -1,4 +1,5 @@
 import { useGLTF } from "@react-three/drei";
+import { HoverOutlines } from "./HoverOutlines";
 import { useControls } from "leva";
 import { useMemo, useRef } from "react";
 import * as THREE from "three";
@@ -23,7 +24,7 @@ export function Column({ castShadow = false, envMapIntensity, ...props }) {
   );
 
   const rigidBody = useRef();
-  const hoverHandlers = useHoverEffect();
+  const { hovered, ...hoverHandlers } = useHoverEffect();
 
   return (
     <RigidBody ref={rigidBody} {...props}>
@@ -51,7 +52,9 @@ export function Column({ castShadow = false, envMapIntensity, ...props }) {
           );
         }}
         {...hoverHandlers}
-      />
+      >
+        {hovered && <HoverOutlines />}
+      </mesh>
     </RigidBody>
   );
 }

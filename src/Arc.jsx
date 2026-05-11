@@ -4,8 +4,9 @@ Command: npx gltfjsx@6.2.16 public/arc.glb
 */
 
 import { useGLTF } from "@react-three/drei";
+import { HoverOutlines } from "./HoverOutlines";
 
-export function Arc({ castShadow, onClick, ...props }) {
+export function Arc({ castShadow, onClick, hovered, ...props }) {
   const { nodes, materials } = useGLTF("/arc.glb");
   return (
     <mesh
@@ -15,7 +16,9 @@ export function Arc({ castShadow, onClick, ...props }) {
       onClick={onClick}
       dispose={null}
       {...props}
-    />
+    >
+      {hovered && <HoverOutlines />}
+    </mesh>
   );
 }
 

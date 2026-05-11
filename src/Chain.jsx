@@ -9,7 +9,7 @@ export function Chain({ envMapIntensity, radius = 0.2, ...props }) {
   const ball2 = useRef();
   const ball3 = useRef();
 
-  const hoverHandlers = useHoverEffect();
+  const { hovered, ...hoverHandlers } = useHoverEffect();
 
   useSphericalJoint(base, ball1, [
     [0, radius, 0],
@@ -30,6 +30,7 @@ export function Chain({ envMapIntensity, radius = 0.2, ...props }) {
         ref={base}
         radius={radius}
         envMapIntensity={envMapIntensity}
+        hovered={hovered}
         castShadow
         half
         type={"fixed"}
@@ -38,6 +39,7 @@ export function Chain({ envMapIntensity, radius = 0.2, ...props }) {
         ref={ball1}
         radius={radius}
         envMapIntensity={envMapIntensity}
+        hovered={hovered}
         castShadow
         position-y={radius * 2}
       />
@@ -45,6 +47,7 @@ export function Chain({ envMapIntensity, radius = 0.2, ...props }) {
         ref={ball2}
         radius={radius}
         envMapIntensity={envMapIntensity}
+        hovered={hovered}
         castShadow
         position-y={radius * 2 * 2}
       />
@@ -52,6 +55,7 @@ export function Chain({ envMapIntensity, radius = 0.2, ...props }) {
         ref={ball3}
         radius={radius}
         envMapIntensity={envMapIntensity}
+        hovered={hovered}
         castShadow
         position-y={radius * 2 * 3}
       />
