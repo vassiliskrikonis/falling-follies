@@ -1,6 +1,7 @@
-import { AnimatePresence, motion, easeOut } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 import { MenuButton } from "./MenuButton.jsx";
 import "./GameMenu.css";
+import { OVERLAY_ENTER, OVERLAY_EXIT } from "./transitions.js";
 
 export const GameMenu = ({ isOpen, onResume, onRestart, onHelp }) => {
   return (
@@ -9,8 +10,8 @@ export const GameMenu = ({ isOpen, onResume, onRestart, onHelp }) => {
         <motion.div
           className="game-menu game-menu--paused"
           initial={{ opacity: 0 }}
-          animate={{ opacity: 1, transition: { duration: 0.3, ease: easeOut } }}
-          exit={{ opacity: 0, transition: { duration: 0.5, ease: easeOut } }}
+          animate={{ opacity: 1, transition: OVERLAY_ENTER }}
+          exit={{ opacity: 0, transition: OVERLAY_EXIT }}
         >
           <div>
             <h1 className="intro-title">Falling Follies</h1>

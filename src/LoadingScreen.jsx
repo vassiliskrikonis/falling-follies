@@ -1,6 +1,7 @@
 import { useProgress } from "@react-three/drei";
 import "./LoadingScreen.css";
-import { AnimatePresence, motion, easeOut } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
+import { LOADING_EXIT } from "./transitions.js";
 
 export const LoadingScreen = ({ onExitComplete }) => {
   const { progress, active } = useProgress();
@@ -11,7 +12,7 @@ export const LoadingScreen = ({ onExitComplete }) => {
         <motion.div
           className="loading-screen"
           initial={{ opacity: 1 }}
-          exit={{ opacity: 0, transition: { duration: 1, ease: easeOut } }}
+          exit={{ opacity: 0, transition: LOADING_EXIT }}
         >
           <span className="loading-status">Loading {progress.toFixed(2)}%</span>
           <h1 className="intro-title">Falling Follies</h1>

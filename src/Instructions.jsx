@@ -1,6 +1,7 @@
-import { AnimatePresence, motion, easeOut } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 import { MenuButton } from "./MenuButton.jsx";
 import "./Instructions.css";
+import { OVERLAY_ENTER, OVERLAY_EXIT } from "./transitions.js";
 
 export const Instructions = ({ isOpen, onClose }) => {
   return (
@@ -9,8 +10,8 @@ export const Instructions = ({ isOpen, onClose }) => {
         <motion.div
           className="instructions"
           initial={{ opacity: 0 }}
-          animate={{ opacity: 1, transition: { duration: 0.3, ease: easeOut } }}
-          exit={{ opacity: 0, transition: { duration: 0.5, ease: easeOut } }}
+          animate={{ opacity: 1, transition: OVERLAY_ENTER }}
+          exit={{ opacity: 0, transition: OVERLAY_EXIT }}
           onClick={onClose}
         >
           <div
