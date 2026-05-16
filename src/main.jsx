@@ -10,7 +10,7 @@ import { LoadingScreen } from "./LoadingScreen.jsx";
 import { GameMenu } from "./GameMenu.jsx";
 import { MenuButton } from "./MenuButton.jsx";
 import { Instructions } from "./Instructions.jsx";
-import { IntroText } from "./IntroText.jsx";
+import { StartScreen } from "./StartScreen.jsx";
 import { usePreventSelect } from "./usePreventSelect.js";
 
 // eslint-disable-next-line react-refresh/only-export-components
@@ -90,7 +90,7 @@ const App = () => {
         </Physics>
       </Canvas>
       <LoadingScreen />
-      <IntroText isOpen={showIntro} onDismiss={dismissIntro} />
+      <StartScreen isOpen={showIntro} onDismiss={dismissIntro} />
       <GameMenu
         isOpen={isPaused}
         isPaused={isPaused}

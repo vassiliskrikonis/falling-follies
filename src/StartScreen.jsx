@@ -1,7 +1,7 @@
 import { AnimatePresence, motion } from "framer-motion";
 import { MenuButton } from "./MenuButton.jsx";
 
-export const IntroText = ({ isOpen, onDismiss }) => {
+export const StartScreen = ({ isOpen, onDismiss }) => {
   return (
     <AnimatePresence>
       {isOpen && (
