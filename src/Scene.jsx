@@ -1,12 +1,11 @@
-import { Environment, OrbitControls } from "@react-three/drei";
+import { Environment } from "@react-three/drei";
 import { Arch } from "./Arch";
 import { Column } from "./Column";
 import { folder, useControls } from "leva";
 import { Chain } from "./Chain";
 import { Floor } from "./Floor";
-import { useEffect, useMemo, useRef } from "react";
+import { useMemo } from "react";
 import { toArray } from "./utils";
-import { useThree } from "@react-three/fiber";
 import sceneConfig from "./sceneConfig.json";
 
 const Scene = () => {
@@ -59,34 +58,8 @@ const Scene = () => {
     [envMapIntensity]
   );
 
-  const cameraControls = useControls("Camera", {
-    position: {
-      x: 0.1,
-      y: 2.5,
-      z: 2.9,
-    },
-    target: { x: 0, y: 1.7, z: 0 },
-    maxDistance: 28,
-  });
-  const orbitControls = useRef();
-  const { camera } = useThree();
-  // Set initial camera position only on mount (empty deps) so it doesn't
-  // reset when unrelated state changes (e.g. pause/resume) trigger re-renders.
-  useEffect(() => {
-    camera.position.copy(cameraControls.position);
-    if (orbitControls.current) {
-      orbitControls.current.target.copy(cameraControls.target);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
   return (
     <>
-      <OrbitControls
-        ref={orbitControls}
-        makeDefault
-        maxDistance={cameraControls.maxDistance}
-      />
       <Environment
         ground={{ height: 0, radius: 28, scale: 100 }}
         files={"./kloofendal_48d_partly_cloudy_puresky_2k.hdr"}

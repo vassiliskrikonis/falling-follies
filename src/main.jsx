@@ -8,6 +8,7 @@ import { Leva } from "leva";
 import { AnimatePresence, motion } from "framer-motion";
 import { CONTROLS_ENTER, CONTROLS_EXIT } from "./transitions.js";
 import { LoadingScreen } from "./LoadingScreen.jsx";
+import { CameraRig } from "./CameraRig.jsx";
 import { GameMenu } from "./GameMenu.jsx";
 import { MenuButton } from "./MenuButton.jsx";
 import { Instructions } from "./Instructions.jsx";
@@ -74,17 +75,8 @@ const App = () => {
     <>
       {/* TODO use <Center /> */}
       <Leva hidden />
-      <Canvas
-        shadows
-        camera={{
-          position: [-2.3, 2.1, 0.7],
-          rotation: [-0.15, 0.08, -0.01],
-          up: [0, 1, 0],
-          near: 0.1,
-          far: 1000,
-          fov: 75,
-        }}
-      >
+      <Canvas shadows>
+        <CameraRig key={resetKey} />
         <Physics key={resetKey}>
           <Suspense fallback={null}>
             <Scene />
