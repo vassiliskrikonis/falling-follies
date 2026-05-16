@@ -14,11 +14,7 @@ export const LoadingScreen = () => {
           exit={{ opacity: 0, transition: { duration: 1, ease: easeOut } }}
         >
           <span className="loading-status">Loading {progress.toFixed(2)}%</span>
-          <img
-            className="title"
-            src="/PFP_screen_logo_white.webp"
-            alt="Falling Follies logo"
-          />
+          <h1 className="intro-title">Falling Follies</h1>
         </motion.div>
       )}
     </AnimatePresence>
