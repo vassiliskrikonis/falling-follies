@@ -19,6 +19,7 @@ const App = () => {
   const [isPaused, setIsPaused] = useState(false);
   const [showInstructions, setShowInstructions] = useState(false);
   const [showIntro, setShowIntro] = useState(true);
+  const [isLoaded, setIsLoaded] = useState(false);
 
   const restart = useCallback(() => setResetKey((k) => k + 1), []);
   const dismissIntro = useCallback(() => setShowIntro(false), []);
@@ -89,8 +90,8 @@ const App = () => {
           </Suspense>
         </Physics>
       </Canvas>
-      <LoadingScreen />
-      <StartScreen isOpen={showIntro} onDismiss={dismissIntro} />
+      <LoadingScreen onExitComplete={() => setIsLoaded(true)} />
+      <StartScreen isOpen={showIntro && isLoaded} onDismiss={dismissIntro} />
       <GameMenu
         isOpen={isPaused}
         isPaused={isPaused}

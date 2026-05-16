@@ -2,11 +2,11 @@ import { useProgress } from "@react-three/drei";
 import "./LoadingScreen.css";
 import { AnimatePresence, motion, easeOut } from "framer-motion";
 
-export const LoadingScreen = () => {
+export const LoadingScreen = ({ onExitComplete }) => {
   const { progress, active } = useProgress();
 
   return (
-    <AnimatePresence>
+    <AnimatePresence onExitComplete={onExitComplete}>
       {active && (
         <motion.div
           className="loading-screen"

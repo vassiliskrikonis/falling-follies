@@ -8,7 +8,7 @@ export const StartScreen = ({ isOpen, onDismiss }) => {
         <motion.div
           className="intro-text"
           initial={{ opacity: 0 }}
-          animate={{ opacity: 1, transition: { duration: 0.4, delay: 0.5 } }}
+          animate={{ opacity: 1, transition: { duration: 0.4 } }}
           exit={{ opacity: 0, transition: { duration: 0.6 } }}
         >
           <h1 className="intro-title">Falling Follies</h1>
