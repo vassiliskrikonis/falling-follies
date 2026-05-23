@@ -9,8 +9,12 @@ const MEDIUM = 0.5;
 const SLOW = 0.6;
 const BEAT = 0.4;
 
-// Loading screen — long fade-out that drives the loading → start sequence
-export const LOADING_EXIT = { duration: 1, ease };
+// Loading screen — long fade-out that drives the loading → start sequence.
+// The `delay` holds the screen fully opaque for a beat after loading completes
+// so the scene's first-frame lighting settle (image-based lighting and
+// tone-mapped reflections resolving over the first rendered frames) finishes
+// while still hidden — otherwise it shows as a brief brighten-then-darken flash.
+export const LOADING_EXIT = { duration: 1, ease, delay: BEAT };
 
 // Standard overlay panels (GameMenu, Instructions)
 export const OVERLAY_ENTER = { duration: FAST, ease };
