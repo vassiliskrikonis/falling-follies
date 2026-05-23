@@ -25,7 +25,12 @@ const Scene = () => {
   const arches = useMemo(
     () =>
       sceneConfig.arches.map((props, i) => (
-        <Arch key={i} envMapIntensity={envMapIntensity} castShadow {...props} />
+        <Arch
+          key={`arch-${i}`}
+          envMapIntensity={envMapIntensity}
+          castShadow
+          {...props}
+        />
       )),
     [envMapIntensity]
   );
@@ -33,7 +38,7 @@ const Scene = () => {
     () =>
       sceneConfig.columns.map((props, i) => (
         <Column
-          key={i}
+          key={`column-${i}`}
           envMapIntensity={envMapIntensity}
           castShadow
           {...props}
@@ -47,7 +52,7 @@ const Scene = () => {
         const { radius, ...restProps } = props;
         return (
           <Chain
-            key={i}
+            key={`chain-${i}`}
             radius={radius}
             envMapIntensity={envMapIntensity}
             castShadow

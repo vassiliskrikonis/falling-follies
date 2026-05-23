@@ -76,8 +76,8 @@ const App = () => {
       {/* TODO use <Center /> */}
       <Leva hidden />
       <Canvas shadows>
-        <CameraRig key={resetKey} />
-        <Physics key={resetKey}>
+        <CameraRig key={`camera-${resetKey}`} />
+        <Physics key={`physics-${resetKey}`}>
           <Suspense fallback={null}>
             <Scene />
           </Suspense>
