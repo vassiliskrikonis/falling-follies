@@ -1,6 +1,6 @@
 import { OrbitControls } from "@react-three/drei";
 import { useControls } from "leva";
-import { useEffect, useRef } from "react";
+import { useLayoutEffect, useRef } from "react";
 import { useThree } from "@react-three/fiber";
 
 export const CameraRig = () => {
@@ -14,7 +14,7 @@ export const CameraRig = () => {
 
   // Set initial camera position only on mount (empty deps) so it doesn't
   // reset when unrelated state changes (e.g. pause/resume) trigger re-renders.
-  useEffect(() => {
+  useLayoutEffect(() => {
     camera.position.copy(cameraControls.position);
     if (orbitControls.current) {
       orbitControls.current.target.copy(cameraControls.target);
