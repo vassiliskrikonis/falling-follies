@@ -1,6 +1,7 @@
 import { Circle, MeshReflectorMaterial } from "@react-three/drei";
 import { LevaInputs, folder, useControls } from "leva";
 import { RigidBody } from "@react-three/rapier";
+import { useLayoutEffect, useRef } from "react";
 
 export function Floor(props) {
   const mirrorControls = useControls("Floor", {
@@ -21,6 +22,18 @@ export function Floor(props) {
     }),
   });
 
+  // Workaround for a one-frame "scene projected flat onto the floor" glitch on
+  // load. MeshReflectorMaterial builds its reflection plane from this mesh's
+  // matrixWorld on its first frame. The RigidBody sets the -PI/2 rotation as a
+  // local transform immediately, but matrixWorld isn't recomputed from it until
+  // the first render — so the reflector's first frame reflects against a
+  // degenerate (sideways) plane. Force the world matrix up-to-date before that
+  // first frame runs.
+  const floorRef = useRef(null);
+  useLayoutEffect(() => {
+    floorRef.current?.updateWorldMatrix(true, false);
+  }, []);
+
   return (
     <RigidBody
       position={[0, -0.001, 0]}
@@ -28,7 +41,7 @@ export function Floor(props) {
       type="fixed"
       {...props}
     >
-      <Circle receiveShadow args={[22]}>
+      <Circle ref={floorRef} receiveShadow args={[22]}>
         <MeshReflectorMaterial {...mirrorControls} />
       </Circle>
     </RigidBody>
